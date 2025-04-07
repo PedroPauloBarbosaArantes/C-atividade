@@ -1,4 +1,4 @@
-#include "queue.h"
+#include "queue.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -45,8 +45,10 @@ void* consumer_thread(void* arg) {
 }
 
 void print_status() {
+	int i;
+	
     printf("\nQueue Status:\n");
-    for (int i = 0; i < NUM_QUEUES; i++) {
+    for (i = 0; i < NUM_QUEUES; i++) {
         printf("Queue %d: Size=%d, Elements removed=%d\n", 
                i, queues[i]->count, elements_removed[i]);
     }
@@ -114,10 +116,11 @@ void user_interface() {
 }
 
 int main() {
+	int i;
     srand(time(NULL));
     
     // Create queues
-    for (int i = 0; i < NUM_QUEUES - 1; i++) {
+    for (i = 0; i < NUM_QUEUES - 1; i++) {
         queues[i] = createQueue(QUEUE_SIZE);
     }
     queues[NUM_QUEUES - 1] = createQueue(QUEUE_SIZE * LARGE_QUEUE_MULTIPLIER);
@@ -129,7 +132,7 @@ int main() {
     // Create consumer threads
     pthread_t consumers[NUM_QUEUES];
     int consumer_args[NUM_QUEUES];
-    for (int i = 0; i < NUM_QUEUES; i++) {
+    for (i = 0; i < NUM_QUEUES; i++) {
         consumer_args[i] = i;
         pthread_create(&consumers[i], NULL, consumer_thread, &consumer_args[i]);
     }
@@ -139,7 +142,7 @@ int main() {
     
     // Wait for threads to finish
     pthread_join(producer, NULL);
-    for (int i = 0; i < NUM_QUEUES; i++) {
+    for (i = 0; i < NUM_QUEUES; i++) {
         pthread_join(consumers[i], NULL);
     }
     
@@ -147,7 +150,7 @@ int main() {
     print_status();
     
     // Free queues
-    for (int i = 0; i < NUM_QUEUES; i++) {
+    for (i = 0; i < NUM_QUEUES; i++) {
         freeQueue(queues[i]);
     }
     
